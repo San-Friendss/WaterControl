@@ -12,6 +12,9 @@
 #define PUMP 18
 #define LED 2
 
+const String BLYNK_BLACK = "#000000";
+const String BLYNK_YELLOW = "#ED9D00";
+
 // Your WiFi credentials.
 char ssid[] = "apkmew";
 char pass[] = "6410500360";
@@ -52,11 +55,20 @@ BLYNK_WRITE(V2) // read mode
     bridge1.virtualWrite(V0, mode);
     if (mode == 0) // manual mode
     {
+        Blynk.setProperty(V0, "color", BLYNK_YELLOW);
+        Blynk.setProperty(V0, "onLabel", "ON");
+        Blynk.setProperty(V0, "offLabel", "OFF");
+        Serial.println("Open Pump Enable");
         digitalWrite(PUMP, LOW);
         openPump = 0;
     }
     else if (mode == 1) // auto mode
     {
+        Blynk.setProperty(V0, "color", BLYNK_BLACK);
+        Blynk.virtualWrite(V0, LOW);
+        Blynk.setProperty(V0, "onLabel", "disable !");
+        Blynk.setProperty(V0, "offLabel", "disable");
+        Serial.println("Open Pump Disable");
         if (openPump == 1)
         {
             digitalWrite(PUMP, HIGH);
