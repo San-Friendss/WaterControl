@@ -21,15 +21,17 @@ WidgetBridge bridge1(V0);
 int openPump = 0; // 0 = close, 1 = open
 int wateringCycle = 5;
 int mode = 0; // 0 = manual, 1 = auto
+int manualControl = 0;
 
 BLYNK_WRITE(V0) // open - close pump
 {
+    // manualControl = 1;
     openPump = param.asInt();
-    if (openPump == 1)
+    if (openPump == 1 && mode == 0)
     {
         digitalWrite(PUMP, HIGH);
     }
-    else
+    else if (openPump == 0 && mode == 0)
     {
         digitalWrite(PUMP, LOW);
     }
@@ -38,6 +40,8 @@ BLYNK_WRITE(V0) // open - close pump
 BLYNK_WRITE(V1) // change watering cycle
 {
     wateringCycle = param.asInt(); 
+    Serial.print("watering cycle: ");
+    Serial.println(wateringCycle);
 }
 
 BLYNK_WRITE(V2) // read mode
@@ -46,6 +50,26 @@ BLYNK_WRITE(V2) // read mode
     Serial.print("mode: ");
     Serial.println(mode);
     bridge1.virtualWrite(V0, mode);
+    if (mode == 0) // manual mode
+    {
+        digitalWrite(PUMP, LOW);
+        openPump = 0;
+    }
+    else if (mode == 1) // auto mode
+    {
+        if (openPump == 1)
+        {
+            digitalWrite(PUMP, HIGH);
+            delay(2000); // watering for 2 seconds
+            digitalWrite(PUMP, LOW);
+            openPump = 0;
+        }
+        else
+        {
+            delay(wateringCycle * 1000);
+            openPump = 1;
+        }
+    }
 }
 
 // This function is called every time the device is connected to the Blynk.Cloud
@@ -65,13 +89,13 @@ void setup()
     Blynk.begin(BLYNK_AUTH_TOKEN_WATER_PUMP, ssid, pass, "blynk.iot-cm.com", 8080); //Blynk
     pinMode(LED, OUTPUT);
     pinMode(PUMP, OUTPUT);
+    Serial.print("watering cycle: ");
+    Serial.println(wateringCycle);
 }
 
 void loop()
 {
     Blynk.run(); // Blynk
-    Serial.print("watering cycle: ");
-    Serial.println(wateringCycle);
     if (mode == 1) // auto mode
     {
         if (openPump == 1)
@@ -85,17 +109,6 @@ void loop()
         {
             delay(wateringCycle * 1000);
             openPump = 1;
-        }
-    }
-    else
-    {
-        if (openPump == 1)
-        {
-            digitalWrite(PUMP, HIGH);
-        }
-        else
-        {
-            digitalWrite(PUMP, LOW);
         }
     }
 }
