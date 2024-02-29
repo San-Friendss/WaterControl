@@ -13,13 +13,13 @@
 #define LED 2
 
 // Your WiFi credentials.
-char ssid[] = "pornnapat";
-char pass[] = "0961514599";
+char ssid[] = "apkmew";
+char pass[] = "6410500360";
 
 WidgetBridge bridge1(V0);
 
 int openPump = 0; // 0 = close, 1 = open
-int wateringCycle = 0;
+int wateringCycle = 5;
 int mode = 0; // 0 = manual, 1 = auto
 
 BLYNK_WRITE(V0) // open - close pump
@@ -38,8 +38,6 @@ BLYNK_WRITE(V0) // open - close pump
 BLYNK_WRITE(V1) // change watering cycle
 {
     wateringCycle = param.asInt(); 
-    Serial.print("watering cycle: ");
-    Serial.println(wateringCycle);
 }
 
 BLYNK_WRITE(V2) // read mode
@@ -72,6 +70,8 @@ void setup()
 void loop()
 {
     Blynk.run(); // Blynk
+    Serial.print("watering cycle: ");
+    Serial.println(wateringCycle);
     if (mode == 1) // auto mode
     {
         if (openPump == 1)
