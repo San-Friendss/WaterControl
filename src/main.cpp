@@ -72,7 +72,7 @@ BLYNK_WRITE(V2) // read mode
         if (openPump == 1)
         {
             digitalWrite(PUMP, HIGH);
-            delay(2000); // watering for 2 seconds
+            delay(200); // watering for 0.2 seconds
             digitalWrite(PUMP, LOW);
             openPump = 0;
         }
