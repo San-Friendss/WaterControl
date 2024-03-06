@@ -78,7 +78,7 @@ BLYNK_WRITE(V2) // read mode
         }
         else
         {
-            delay(wateringCycle * 1000);
+            delay(wateringCycle * 60000);
             openPump = 1;
         }
     }
